@@ -5,118 +5,185 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="stylesheet" href="index.css" />
-    <title>数组也是对象</title>
+    <title>一个导航demo</title>
   </head>
   <body>
-    <!-- <header>搜索</header> -->
     <main>
       <div id="main"></div>
     </main>
 
     <script>
-      keys = {
-        '0': {
-          0: 'q',
-          1: 'w',
-          2: 'e',
-          3: 'r',
-          4: 't',
-          5: 'y',
-          6: 'u',
-          7: 'i',
-          8: 'o',
-          9: 'p',
-          length: 10
-        },
-        '1': {
-          0: 'a',
-          1: 's',
-          2: 'd',
-          3: 'f',
-          4: 'g',
-          5: 'h',
-          6: 'j',
-          7: 'k',
-          8: 'l',
-          length: 9
-        },
-        '2': {
-          0: 'z',
-          1: 'x',
-          2: 'c',
-          3: 'v',
-          4: 'b',
-          5: 'n',
-          6: 'm',
-          length: 7
-        },
-        length: 3
-      }
-      hash = {
-        q: 'http://www.baidu.com',
-        w: 'http://www.baidu.com',
-        e: 'http://www.baidu.com',
-        r: 'http://www.baidu.com',
-        t: 'http://www.baidu.com',
-        y: 'http://www.baidu.com',
-        u: 'http://www.baidu.com',
-        i: 'http://www.baidu.com',
-        o: 'http://www.baidu.com',
-        p: 'http://www.baidu.com',
-        a: 'http://www.baidu.com',
-        s: 'http://www.baidu.com',
-        d: 'http://www.baidu.com',
-        f: 'http://www.baidu.com',
-        g: 'http://www.baidu.com',
-        h: 'http://www.baidu.com',
-        j: 'http://www.baidu.com',
-        k: 'http://www.baidu.com',
-        l: 'http://www.baidu.com',
-        z: 'http://www.baidu.com',
-        x: 'http://www.baidu.com',
-        c: 'http://www.baidu.com',
-        v: 'http://www.baidu.com',
-        b: 'http://www.baidu.com',
-        n: 'http://www.baidu.com',
-        m: 'http://www.baidu.com'
+      // 1.初始化数据
+      var hashA = initDate()
+      var keys = hashA['keys']
+      var hash = hashA['hash']
+
+      // 2. 生成键盘
+      generateKeyBoard(keys, hash)
+
+      // 3.监听用户动作
+      listenToKeyborad(hash)
+
+      // 工具函数
+      function createSpan(Textcontent) {
+        var span = creatElement('span')
+        span.textContent = Textcontent
+        span.classNmae = 'span'
+        return span
       }
 
-      hashInLocalStrorage = JSON.parse(localStorage.getItem('hash') || '{}')
-      if (hashInLocalStrorage) {
-        hash = hashInLocalStrorage
-      }
-      index = 0
-      while (index < keys['length']) {
-        div1 = document.createElement('div')
-        main.appendChild(div1)
-
-        row = keys[index]
-
-        index1 = 0
-        while (index1 < row['length']) {
-          kbd = document.createElement('kbd')
-          kbd.textContent = row[index1]
-          button = document.createElement('button')
-          button.textContent = '编辑'
-          button.id = row[index1]
-          button.onclick = function(e) {
-            key = e.target.id
-            inputWebsite = prompt('请输入网址')
-            hash[key] = inputWebsite
-            localStorage.setItem('hash', JSON.stringify(hash))
-          }
-          kbd.appendChild(button)
-          div1.appendChild(kbd)
-          index1++
+      function createButton(id) {
+        var button = creatElement('button')
+        button.textContent = '编辑'
+        button.id = id
+        button.onclick = function(e) {
+          // 点击事件
+          button = e['target']
+          key = e.target.id
+          inputWebsite = prompt('请输入网址')
+          hash[key] = inputWebsite
+          e.target.nextSibling.src = 'http://www.' + hash[key] + '/favicon.ico'
+          localStorage.setItem('hash', JSON.stringify(hash))
         }
-        index++
+        return button
       }
 
-      document.onkeypress = function(e) {
-        key = e['key']
-        website = hash[key]
-        // location.href = website
-        window.open(website, '_blank')
+      function createImg(domain) {
+        var img = creatElement('img')
+        img.onerror = function(e) {
+          e.target.src = './img/point.png'
+        }
+        if (domain) {
+          img.src = 'http://www.' + domain + '/favicon.ico'
+        } else {
+          img.src = './img/point.png'
+        }
+        return img
+      }
+
+      function getFromLocalSoraget(name) {
+        return JSON.parse(localStorage.getItem(name) || '{}')
+      }
+
+      function creatElement(tagName, attrbutes) {
+        var element = document.createElement(tagName)
+        for (var key in attrbutes) {
+          element[key] = attrbutes[key]
+        }
+        return element
+      }
+
+      // 1.初始化数据
+      function initDate() {
+        var keys = {
+          '0': {
+            0: 'q',
+            1: 'w',
+            2: 'e',
+            3: 'r',
+            4: 't',
+            5: 'y',
+            6: 'u',
+            7: 'i',
+            8: 'o',
+            9: 'p',
+            length: 10
+          },
+          '1': {
+            0: 'a',
+            1: 's',
+            2: 'd',
+            3: 'f',
+            4: 'g',
+            5: 'h',
+            6: 'j',
+            7: 'k',
+            8: 'l',
+            length: 9
+          },
+          '2': {
+            0: 'z',
+            1: 'x',
+            2: 'c',
+            3: 'v',
+            4: 'b',
+            5: 'n',
+            6: 'm',
+            length: 7
+          },
+          length: 3
+        }
+        var hash = {
+          q: 'qq.com/',
+          w: 'weibo.com/',
+          e: 'ele.me/',
+          r: 'ruanyifeng.com/',
+          t: 'twitter.com/',
+          y: 'youtube.com/',
+          u: 'u.ctrip.com/',
+          i: 'ifeng.com/',
+          o: undefined,
+          p: undefined,
+          a: 'cs.anjuke.com/',
+          s: 'sina.com.cn/',
+          d: 'douban.com/',
+          f: 'npmjs.com/',
+          g: 'gome.com.cn/',
+          h: 'huanqiu.com/',
+          j: 'jd.com/',
+          k: 'kuaishou.com/',
+          l: undefined,
+          z: 'zhihu.com/',
+          x: 'ctrip.com/',
+          c: undefined,
+          v: 'vip.com/',
+          b: 'bilibili.com/',
+          n: undefined,
+          m: 'mgtv.com/'
+        }
+        var hashInLocalStrorage = getFromLocalSoraget('hash')
+        if (hashInLocalStrorage) {
+          hash = hashInLocalStrorage
+        }
+        return {
+          keys: keys,
+          hash: hash
+        }
+      }
+
+      // 2.生成键盘
+      function generateKeyBoard(keys, hash) {
+        for (let index = 0; index < keys['length']; index++) {
+          var div1 = creatElement('div', { className: 'row' })
+          main.appendChild(div1)
+
+          var row = keys[index]
+
+          for (let index1 = 0; index1 < row['length']; index1++) {
+            var span = createSpan(row[index1])
+
+            var button = createButton(row[index1])
+
+            var img = createImg(hash[row[index1]])
+
+            var kbd = creatElement('kbd', { className: 'key' })
+            kbd.appendChild(button)
+            kbd.appendChild(img)
+            kbd.appendChild(span)
+
+            div1.appendChild(kbd)
+          }
+        }
+      }
+
+      //  3. 监听键盘
+      function listenToKeyborad(hash) {
+        document.onkeypress = function(e) {
+          var key = e['key']
+          var website = hash[key]
+          // location.href = website
+          window.open('http://www.' + website, '_blank')
+        }
       }
     </script>
   </body>
